@@ -105,8 +105,26 @@ export default function MainApp() {
     }
   };
 
+  const deleteDocument = async (docHash: string) => {
+    if (!window.confirm("Deseja realmente excluir este documento do histórico e banco de dados?")) return;
+    try {
+      setLoading(true);
+      await axios.delete(`${apiUrl}/documents/${docHash}`);
+      // Refresh
+      fetchHistory();
+      if (result && result.processing_time_ms && result.processing_time_ms > 0) {
+        // user had this document loaded, let's clear it
+        setResult(null);
+      }
+    } catch {
+      alert("Erro ao excluir o documento histórico");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <Layout history={history} loadDocument={loadDocument} stats={stats}>
+    <Layout history={history} loadDocument={loadDocument} deleteDocument={deleteDocument} stats={stats}>
       <UploadSection
         handleFileUpload={handleFileUpload}
         textInput={textInput}

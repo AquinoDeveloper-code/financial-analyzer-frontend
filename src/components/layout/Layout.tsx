@@ -1,30 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import SettingsModal from './SettingsModal';
 
 interface LayoutProps {
   children: React.ReactNode;
   history: Array<{ doc_hash: string; tipo: string; created_at: string }>;
   loadDocument: (docHash: string) => void;
+  deleteDocument: (docHash: string) => void;
   stats: {
     total_documents_processed: number;
     average_processing_time_ms: number;
   } | null;
 }
 
-export default function Layout({ children, history, loadDocument, stats }: LayoutProps) {
+export default function Layout({ children, history, loadDocument, deleteDocument, stats }: LayoutProps) {
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
+
   return (
-    <div className="min-h-screen bg-slate-50 flex font-sans text-slate-800">
-      <Sidebar history={history} loadDocument={loadDocument} />
+    <div className="flex h-screen bg-slate-50 text-slate-900 font-sans overflow-hidden">
+      <Sidebar history={history} loadDocument={loadDocument} deleteDocument={deleteDocument} />
       
-      <div className="flex-1 overflow-y-auto h-screen flex flex-col">
-        <Header stats={stats} />
-        <main className="flex-1 p-6 md:p-8">
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <div className="flex-1 flex flex-col h-full overflow-hidden">
+        <Header stats={stats} onOpenSettings={() => setIsSettingsOpen(true)} />
+        
+        <main className="flex-1 overflow-y-auto p-4 md:p-8">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
             {children}
           </div>
         </main>
       </div>
+
+      <SettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+        apiUrl={apiUrl} 
+      />
     </div>
   );
 }

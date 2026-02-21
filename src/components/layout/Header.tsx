@@ -1,19 +1,30 @@
-import { TrendingUp, FileText, Activity } from 'lucide-react';
+import { TrendingUp, FileText, Activity, Settings } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 interface HeaderProps {
   stats: {
     total_documents_processed: number;
     average_processing_time_ms: number;
   } | null;
+  onOpenSettings: () => void;
 }
 
-export default function Header({ stats }: HeaderProps) {
+export default function Header({ stats, onOpenSettings }: HeaderProps) {
+  const { themeBase } = useTheme();
+
+  // Função helper para retornar a cor baseada no tema
+  const getThemeClasses = () => {
+    if (themeBase === 'emerald') return 'bg-emerald-100 text-emerald-700';
+    if (themeBase === 'blue') return 'bg-blue-100 text-blue-700';
+    return 'bg-slate-100 text-slate-700';
+  };
+
   return (
     <header className="sticky top-0 z-10 bg-white border-b border-slate-200 px-6 py-4 md:px-8 shadow-sm">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-            <span className="p-1.5 bg-emerald-100 rounded-lg text-emerald-700">
+            <span className={`p-1.5 rounded-lg ${getThemeClasses()}`}>
               <TrendingUp size={20} />
             </span>
             Analisador Financeiro IA
@@ -44,6 +55,14 @@ export default function Header({ stats }: HeaderProps) {
             </div>
           </div>
         )}
+
+        <button 
+          onClick={onOpenSettings}
+          className="ml-auto md:ml-0 p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors flex-shrink-0"
+          title="Configurações e Sistema"
+        >
+          <Settings size={20} />
+        </button>
       </div>
     </header>
   );

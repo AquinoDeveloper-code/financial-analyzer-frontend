@@ -1,11 +1,12 @@
-import { History, ChevronRight } from 'lucide-react';
+import { History, ChevronRight, Trash2 } from 'lucide-react';
 
 interface SidebarProps {
   history: Array<{ doc_hash: string; tipo: string; created_at: string }>;
   loadDocument: (docHash: string) => void;
+  deleteDocument: (docHash: string) => void;
 }
 
-export default function Sidebar({ history, loadDocument }: SidebarProps) {
+export default function Sidebar({ history, loadDocument, deleteDocument }: SidebarProps) {
   return (
     <aside className="w-64 bg-white border-r border-slate-200 h-screen sticky top-0 md:flex flex-col hidden shadow-sm">
       <div className="p-5 border-b border-slate-100 flex items-center gap-2 text-slate-800 font-bold bg-slate-50">
@@ -20,17 +21,34 @@ export default function Sidebar({ history, loadDocument }: SidebarProps) {
           </div>
         ) : (
           history.map((doc, idx) => (
-            <button
+            <div
               key={idx}
-              onClick={() => loadDocument(doc.doc_hash)}
               className="w-full text-left p-3 rounded-lg bg-white hover:bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-all shadow-sm hover:shadow flex items-center justify-between group"
             >
-              <div className="overflow-hidden">
-                <p className="text-sm font-medium text-slate-700 capitalize truncate">{doc.tipo}</p>
-                <p className="text-xs text-slate-500 mt-0.5">{new Date(doc.created_at).toLocaleDateString()}</p>
+              <button 
+                onClick={() => loadDocument(doc.doc_hash)}
+                className="flex-1 overflow-hidden"
+              >
+                <p className="text-sm font-medium text-slate-700 capitalize truncate text-left">{doc.tipo}</p>
+                <p className="text-xs text-slate-500 mt-0.5 text-left">{new Date(doc.created_at).toLocaleDateString()}</p>
+              </button>
+              
+              <div className="flex gap-1">
+                <button
+                  onClick={() => deleteDocument(doc.doc_hash)}
+                  className="p-1.5 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-md opacity-0 group-hover:opacity-100 transition-all"
+                  title="Excluir Histórico"
+                >
+                  <Trash2 size={16} />
+                </button>
+                <button 
+                  onClick={() => loadDocument(doc.doc_hash)}
+                  className="p-1.5 text-slate-300 group-hover:text-emerald-500 transition-colors"
+                >
+                  <ChevronRight size={16} />
+                </button>
               </div>
-              <ChevronRight size={16} className="text-slate-300 group-hover:text-emerald-500 flex-shrink-0" />
-            </button>
+            </div>
           ))
         )}
       </div>
