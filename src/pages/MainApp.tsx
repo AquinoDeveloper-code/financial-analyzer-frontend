@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Upload, FileText, AlertTriangle, TrendingUp, List, PieChart, Repeat, DollarSign, Clock, Activity } from "lucide-react";
+import { Upload, FileText, AlertTriangle, TrendingUp, List, PieChart, Repeat, DollarSign, Clock, Activity, History, ChevronRight } from "lucide-react";
 
 export default function MainApp() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [textInput, setTextInput] = useState("");
   const [stats, setStats] = useState<any>(null);
+  const [history, setHistory] = useState<any[]>([]);
   const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
   const fetchStats = async () => {
@@ -18,8 +19,30 @@ export default function MainApp() {
     }
   };
 
+  const fetchHistory = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/documents/`);
+      setHistory(response.data.data);
+    } catch (e) {
+      console.error("Erro ao buscar histórico");
+    }
+  };
+
+  const loadDocument = async (docHash: string) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${apiUrl}/documents/${docHash}`);
+      setResult(response.data.data);
+    } catch (e) {
+      alert("Erro ao carregar documento histórico");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchStats();
+    fetchHistory();
   }, []);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +65,8 @@ export default function MainApp() {
     try {
       const response = await axios.post(`${apiUrl}/documents/process`, formData);
       setResult(response.data.data);
-      fetchStats(); // Update stats after new document is processed
+      fetchStats(); 
+      fetchHistory(); 
     } catch (error) {
       alert("Erro ao processar documento. Verifique se a API está rodando.");
     } finally {
@@ -51,31 +75,60 @@ export default function MainApp() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8 text-gray-800 font-sans">
-      <header className="mb-8 max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-blue-900 flex items-center gap-2">
-            <TrendingUp /> Analisador Financeiro IA
-          </h1>
-          <p className="text-gray-500">Transforme faturas e extratos em dados estruturados</p>
+    <div className="min-h-screen bg-gray-50 flex font-sans text-gray-800">
+      
+      {/* Sidebar de Histórico */}
+      <aside className="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 flex flex-col hidden md:flex">
+        <div className="p-4 border-b flex items-center gap-2 text-blue-900 font-bold">
+          <History size={20} /> Histórico
         </div>
-        
-        {stats && (
-          <div className="flex gap-4 bg-white p-3 rounded-lg shadow-sm border border-gray-100 text-sm">
-            <div className="flex flex-col">
-              <span className="text-gray-400 flex items-center gap-1"><FileText size={14}/> Documentos Lidos</span>
-              <span className="font-bold text-gray-700">{stats.total_documents_processed}</span>
-            </div>
-            <div className="w-px bg-gray-200"></div>
-            <div className="flex flex-col">
-              <span className="text-gray-400 flex items-center gap-1"><Activity size={14}/> Média de Processamento AI</span>
-              <span className="font-bold text-blue-600">{(stats.average_processing_time_ms / 1000).toFixed(2)}s / arquivo</span>
-            </div>
-          </div>
-        )}
-      </header>
+        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          {history.length === 0 ? (
+            <p className="text-sm text-gray-400 text-center mt-4">Nenhum documento</p>
+          ) : (
+            history.map((doc, idx) => (
+              <button 
+                key={idx}
+                onClick={() => loadDocument(doc.doc_hash)}
+                className="w-full text-left p-3 rounded-lg hover:bg-blue-50 border border-transparent hover:border-blue-100 transition-colors flex items-center justify-between group"
+              >
+                <div>
+                  <p className="text-sm font-semibold text-gray-700 capitalize">{doc.tipo}</p>
+                  <p className="text-xs text-gray-500">{new Date(doc.created_at).toLocaleDateString()}</p>
+                </div>
+                <ChevronRight size={16} className="text-gray-300 group-hover:text-blue-500" />
+              </button>
+            ))
+          )}
+        </div>
+      </aside>
 
-      <main className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      {/* Conteúdo Principal */}
+      <div className="flex-1 p-8 overflow-y-auto h-screen">
+        <header className="mb-8 max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-blue-900 flex items-center gap-2">
+              <TrendingUp /> Analisador Financeiro IA
+            </h1>
+            <p className="text-gray-500">Transforme faturas e extratos em dados estruturados</p>
+          </div>
+          
+          {stats && (
+            <div className="flex gap-4 bg-white p-3 rounded-lg shadow-sm border border-gray-100 text-sm">
+              <div className="flex flex-col">
+                <span className="text-gray-400 flex items-center gap-1"><FileText size={14}/> Lidos</span>
+                <span className="font-bold text-gray-700">{stats.total_documents_processed}</span>
+              </div>
+              <div className="w-px bg-gray-200"></div>
+              <div className="flex flex-col">
+                <span className="text-gray-400 flex items-center gap-1"><Activity size={14}/> IA (Média)</span>
+                <span className="font-bold text-blue-600">{(stats.average_processing_time_ms / 1000).toFixed(2)}s</span>
+              </div>
+            </div>
+          )}
+        </header>
+
+        <main className="grid grid-cols-1 xl:grid-cols-3 gap-8 max-w-5xl mx-auto">
         {/* Painel de Input */}
         <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-fit">
           <h2 className="text-xl font-semibold mb-4">Novo Documento</h2>
@@ -262,6 +315,7 @@ export default function MainApp() {
           )}
         </section>
       </main>
+      </div>
     </div>
   );
 }
