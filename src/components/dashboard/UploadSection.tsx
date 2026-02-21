@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Upload } from 'lucide-react';
 
 interface UploadSectionProps {
@@ -15,6 +16,20 @@ export default function UploadSection({
   handleTextSubmit,
   loading
 }: UploadSectionProps) {
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (loading) {
+      interval = setInterval(() => {
+        setSeconds((prev) => prev + 1);
+      }, 1000);
+    } else {
+      setSeconds(0);
+    }
+    return () => clearInterval(interval);
+  }, [loading]);
+
   return (
     <section className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 h-fit">
       <h2 className="text-lg font-bold text-slate-800 mb-6">Novo Documento</h2>
@@ -44,7 +59,7 @@ export default function UploadSection({
         disabled={loading || !textInput.trim()}
         className="w-full bg-slate-800 text-white font-medium py-3 rounded-xl hover:bg-slate-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors shadow-sm"
       >
-        {loading ? "Processando IA..." : "Analisar Texto Bruto"}
+        {loading ? `Processando IA... ${seconds}s` : "Analisar Texto Bruto"}
       </button>
     </section>
   );
