@@ -33,8 +33,11 @@ export default function MainApp() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ApiResult | null>(null);
   const [textInput, setTextInput] = useState("");
-  const [stats, setStats] = useState<Record<string, unknown> | null>(null);
-  const [history, setHistory] = useState<Record<string, unknown>[]>([]);
+  const [stats, setStats] = useState<{
+    total_documents_processed: number;
+    average_processing_time_ms: number;
+  } | null>(null);
+  const [history, setHistory] = useState<Array<{ doc_hash: string; tipo: string; created_at: string }>>([]);
   const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
   const fetchStats = async () => {
