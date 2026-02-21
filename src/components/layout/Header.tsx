@@ -1,7 +1,10 @@
 import { TrendingUp, FileText, Activity } from 'lucide-react';
 
 interface HeaderProps {
-  stats: Record<string, unknown> | null;
+  stats: {
+    total_documents_processed: number;
+    average_processing_time_ms: number;
+  } | null;
 }
 
 export default function Header({ stats }: HeaderProps) {

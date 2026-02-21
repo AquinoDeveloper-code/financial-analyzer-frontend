@@ -4,9 +4,12 @@ import Header from './Header';
 
 interface LayoutProps {
   children: React.ReactNode;
-  history: Record<string, unknown>[];
+  history: Array<{ doc_hash: string; tipo: string; created_at: string }>;
   loadDocument: (docHash: string) => void;
-  stats: Record<string, unknown> | null;
+  stats: {
+    total_documents_processed: number;
+    average_processing_time_ms: number;
+  } | null;
 }
 
 export default function Layout({ children, history, loadDocument, stats }: LayoutProps) {

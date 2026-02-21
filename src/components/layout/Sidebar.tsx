@@ -1,7 +1,7 @@
 import { History, ChevronRight } from 'lucide-react';
 
 interface SidebarProps {
-  history: Record<string, unknown>[];
+  history: Array<{ doc_hash: string; tipo: string; created_at: string }>;
   loadDocument: (docHash: string) => void;
 }
 
