@@ -72,10 +72,10 @@ export default function Login() {
               <input
                 id="email-address"
                 name="email"
-                type="email"
+                type="text"
                 required
                 className="appearance-none rounded-xl relative block w-full px-10 py-3 border border-slate-300 placeholder-slate-500 text-slate-900 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm"
-                placeholder="Endereço de e-mail"
+                placeholder="Endereço de e-mail ou usuário"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
