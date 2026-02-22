@@ -13,14 +13,6 @@ export default function SummaryCards({ sumario }: SummaryCardsProps) {
   const renderValue = (val: number, isSaldo = false) => {
     const formatted = formatCurrency(val);
     
-    // Diminui o tamanho da fonte se o texto for muito grande para evitar quebra no Card
-    let sizeClass = 'text-3xl';
-    if (formatted.length >= 18) {
-      sizeClass = 'text-xl';
-    } else if (formatted.length >= 14) {
-      sizeClass = 'text-2xl';
-    }
-    
     let colorClass = 'text-slate-800';
     if (isSaldo) {
       colorClass = val >= 0 ? 'text-emerald-600' : 'text-rose-600';
@@ -28,7 +20,7 @@ export default function SummaryCards({ sumario }: SummaryCardsProps) {
 
     return (
       <p 
-        className={`${sizeClass} ${colorClass} font-bold pl-2 truncate transition-all duration-300`} 
+        className={`text-2xl ${colorClass} font-bold pl-2 truncate transition-all duration-300`} 
         title={formatted}
       >
         {formatted}
