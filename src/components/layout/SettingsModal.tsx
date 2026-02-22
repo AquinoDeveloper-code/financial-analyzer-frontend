@@ -21,10 +21,14 @@ export default function SettingsModal({ isOpen, onClose, apiUrl }: SettingsModal
   const [loading, setLoading] = useState(false);
   const [health, setHealth] = useState<HealthState | null>(null);
   const { setThemeBase } = useTheme();
+  
   const [config, setConfig] = useState<{ui_theme: string; default_model: string}>({
     ui_theme: 'slate',
     default_model: 'llama3'
   });
+
+  const [customHex, setCustomHex] = useState('#10b981'); // Default to emerald if opening picker
+
 
   useEffect(() => {
     if (isOpen) {
@@ -42,7 +46,13 @@ export default function SettingsModal({ isOpen, onClose, apiUrl }: SettingsModal
         axios.get(`${apiUrl}/system/config`)
       ]);
       setHealth(healthRes.data);
-      setConfig(configRes.data.data);
+      const theme = configRes.data.data.ui_theme || 'slate';
+      setConfig({...configRes.data.data, ui_theme: theme});
+      if (theme.startsWith('#')) {
+        setCustomHex(theme);
+      } else {
+        setCustomHex('#10b981'); // reset fallback
+      }
     } catch {
       console.error("Erro ao carregar configurações do sistema.");
     } finally {
@@ -130,24 +140,46 @@ export default function SettingsModal({ isOpen, onClose, apiUrl }: SettingsModal
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-600 block">Tema da Interface (Cor Primária)</label>
-              <div className="flex gap-3">
-                <button 
-                  onClick={() => setConfig({...config, ui_theme: 'slate'})}
-                  className={`w-10 h-10 rounded-full bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 ${config.ui_theme === 'slate' ? 'ring-2 ring-slate-800 ring-offset-2' : ''}`}
-                  title="Slate"
-                />
-                <button 
-                  onClick={() => setConfig({...config, ui_theme: 'emerald'})}
-                  className={`w-10 h-10 rounded-full bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 ${config.ui_theme === 'emerald' ? 'ring-2 ring-emerald-800 ring-offset-2' : ''}`}
-                  title="Emerald"
-                />
-                <button 
-                  onClick={() => setConfig({...config, ui_theme: 'blue'})}
-                  className={`w-10 h-10 rounded-full bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${config.ui_theme === 'blue' ? 'ring-2 ring-blue-800 ring-offset-2' : ''}`}
-                  title="Blue"
-                />
+              <div className="flex items-center gap-4">
+                <div className="flex gap-3 bg-slate-100 p-2 rounded-xl">
+                  <button 
+                    onClick={() => setConfig({...config, ui_theme: 'slate'})}
+                    className={`w-10 h-10 rounded-full bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 hover:scale-110 transition-transform ${config.ui_theme === 'slate' ? 'ring-2 ring-slate-800 ring-offset-2' : ''}`}
+                    title="Slate"
+                  />
+                  <button 
+                    onClick={() => setConfig({...config, ui_theme: 'emerald'})}
+                    className={`w-10 h-10 rounded-full bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 hover:scale-110 transition-transform ${config.ui_theme === 'emerald' ? 'ring-2 ring-emerald-800 ring-offset-2' : ''}`}
+                    title="Emerald"
+                  />
+                  <button 
+                    onClick={() => setConfig({...config, ui_theme: 'blue'})}
+                    className={`w-10 h-10 rounded-full bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 hover:scale-110 transition-transform ${config.ui_theme === 'blue' ? 'ring-2 ring-blue-800 ring-offset-2' : ''}`}
+                    title="Blue"
+                  />
+                </div>
+                
+                <span className="text-slate-300 font-light">|</span>
+
+                <div className="flex items-center gap-2">
+                  <div className={`relative w-10 h-10 rounded-full overflow-hidden hover:scale-110 transition-transform ${config.ui_theme.startsWith('#') ? 'ring-2 ring-slate-800 ring-offset-2' : 'ring-1 ring-slate-300'}`}>
+                    <input 
+                      type="color" 
+                      value={customHex}
+                      onChange={(e) => {
+                        setCustomHex(e.target.value);
+                        setConfig({...config, ui_theme: e.target.value});
+                      }}
+                      className="absolute -top-2 -left-2 w-16 h-16 cursor-pointer"
+                      title="Cor Customizada"
+                    />
+                  </div>
+                  <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-1 rounded-md">
+                    {config.ui_theme.startsWith('#') ? config.ui_theme.toUpperCase() : 'Custom'}
+                  </span>
+                </div>
               </div>
-              <p className="text-xs text-slate-500 pt-1">A cor principal altera os destaques botões primários da aplicação.</p>
+              <p className="text-xs text-slate-500 pt-1">A cor principal altera os destaques e botões primários da aplicação. Padrões ou código Hexadecimal.</p>
             </div>
 
           </div>
