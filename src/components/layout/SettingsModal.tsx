@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { X, Settings2, CheckCircle2, ServerCrash, Loader2, Database, Bot } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ interface HealthState {
 export default function SettingsModal({ isOpen, onClose, apiUrl }: SettingsModalProps) {
   const [loading, setLoading] = useState(false);
   const [health, setHealth] = useState<HealthState | null>(null);
+  const { setThemeBase } = useTheme();
   const [config, setConfig] = useState<{ui_theme: string; default_model: string}>({
     ui_theme: 'slate',
     default_model: 'llama3'
@@ -52,6 +54,7 @@ export default function SettingsModal({ isOpen, onClose, apiUrl }: SettingsModal
     setLoading(true);
     try {
       await axios.put(`${apiUrl}/system/config?ui_theme=${config.ui_theme}&default_model=${config.default_model}`);
+      setThemeBase(config.ui_theme);
       alert("Configurações salvas com sucesso!");
     } catch {
       alert("Erro ao salvar configurações.");

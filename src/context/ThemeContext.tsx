@@ -3,9 +3,13 @@ import axios from 'axios';
 
 type ThemeContextType = {
   themeBase: string;
+  setThemeBase: (theme: string) => void;
 };
 
-const ThemeContext = createContext<ThemeContextType>({ themeBase: 'emerald' });
+const ThemeContext = createContext<ThemeContextType>({ 
+  themeBase: 'emerald',
+  setThemeBase: () => {} 
+});
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useTheme() {
@@ -30,7 +34,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [apiUrl]);
 
   return (
-    <ThemeContext.Provider value={{ themeBase }}>
+    <ThemeContext.Provider value={{ themeBase, setThemeBase }}>
       <div className={`theme-${themeBase}`}>
         {children}
       </div>
