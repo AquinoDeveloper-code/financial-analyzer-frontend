@@ -1,7 +1,22 @@
-import { Home, PlusCircle, PieChart } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+import { Home, PlusCircle, PieChart, LogOut } from 'lucide-react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 export default function NavSidebar() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  const getUserInitial = () => {
+    if (user && user.email) {
+      return user.email.charAt(0).toUpperCase();
+    }
+    return 'U';
+  };
   const routes = [
     { name: 'Dashboard', path: '/', icon: <Home size={20} /> },
     { name: 'Nova Análise', path: '/new', icon: <PlusCircle size={20} /> },
@@ -35,10 +50,28 @@ export default function NavSidebar() {
         ))}
       </nav>
       
-      <div className="p-4 border-t border-slate-800 text-center md:text-left">
-        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-800 flex items-center justify-center mx-auto md:mx-0">
-          <span className="text-slate-400 font-bold text-sm">US</span>
+      <div className="p-4 border-t border-slate-800 flex flex-col items-center md:items-start md:flex-row md:justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-800 flex items-center justify-center flex-shrink-0 border border-slate-700">
+            <span className="text-slate-300 font-bold text-sm">{getUserInitial()}</span>
+          </div>
+          <div className="hidden md:block overflow-hidden">
+            <p className="text-sm font-medium text-slate-300 truncate w-full" title={user?.email}>
+              {user?.email || 'Usuário'}
+            </p>
+            <p className="text-xs text-slate-500">
+              {user?.is_admin === "1" ? "Administrador" : "Membro"}
+            </p>
+          </div>
         </div>
+        
+        <button 
+          onClick={handleLogout}
+          className="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors"
+          title="Sair do sistema"
+        >
+          <LogOut size={18} />
+        </button>
       </div>
     </aside>
   );
