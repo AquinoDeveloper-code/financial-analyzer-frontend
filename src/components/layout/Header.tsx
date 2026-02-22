@@ -1,5 +1,6 @@
-import { TrendingUp, FileText, Activity, Settings } from 'lucide-react';
+import { TrendingUp, FileText, Activity, Settings, Home, History } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   stats: {
@@ -7,10 +8,13 @@ interface HeaderProps {
     average_processing_time_ms: number;
   } | null;
   onOpenSettings: () => void;
+  onToggleHistory: () => void;
+  isHistoryOpen: boolean;
 }
 
-export default function Header({ stats, onOpenSettings }: HeaderProps) {
+export default function Header({ stats, onOpenSettings, onToggleHistory, isHistoryOpen }: HeaderProps) {
   const { themeBase } = useTheme();
+  const navigate = useNavigate();
 
   // Função helper para retornar a cor baseada no tema
   const getThemeClasses = () => {
@@ -56,13 +60,34 @@ export default function Header({ stats, onOpenSettings }: HeaderProps) {
           </div>
         )}
 
-        <button 
-          onClick={onOpenSettings}
-          className="ml-auto md:ml-0 p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors flex-shrink-0"
-          title="Configurações e Sistema"
-        >
-          <Settings size={20} />
-        </button>
+        <div className="flex items-center gap-2 mt-4 md:mt-0 ml-auto md:ml-0">
+          <button 
+            onClick={() => navigate('/')}
+            className="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors flex-shrink-0"
+            title="Ir para Home"
+          >
+            <Home size={20} />
+          </button>
+          
+          <button 
+            onClick={onOpenSettings}
+            className="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors flex-shrink-0"
+            title="Configurações e Sistema"
+          >
+            <Settings size={20} />
+          </button>
+
+          <div className="w-px h-6 bg-slate-200 mx-1"></div>
+
+          <button 
+            onClick={onToggleHistory}
+            className={`p-2 rounded-full transition-colors flex-shrink-0 flex items-center gap-2 ${isHistoryOpen ? 'bg-emerald-100 text-emerald-700' : 'text-slate-500 hover:bg-slate-100'}`}
+            title="Alternar Histórico"
+          >
+            <History size={20} />
+            <span className="text-sm font-medium hidden md:block pr-1">Histórico</span>
+          </button>
+        </div>
       </div>
     </header>
   );
