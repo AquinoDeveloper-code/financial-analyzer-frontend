@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Layout from "../components/layout/Layout";
+import { Toaster, toast } from 'react-hot-toast';
 
 export default function RootLayout() {
   const [stats, setStats] = useState<{
@@ -54,7 +55,7 @@ export default function RootLayout() {
         navigate('/');
       }
     } catch {
-      alert("Erro ao excluir o documento histórico");
+      toast.error("Erro ao excluir o documento histórico");
     } finally {
       setLoading(false);
     }
@@ -62,6 +63,7 @@ export default function RootLayout() {
 
   return (
     <Layout history={history} loadDocument={loadDocument} deleteDocument={deleteDocument} stats={stats}>
+      <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
       <Outlet context={{ refreshLayout: () => { fetchHistory(); fetchStats(); }, apiUrl }} />
       {loading && (
         <div className="fixed inset-0 bg-white/50 flex items-center justify-center z-50">

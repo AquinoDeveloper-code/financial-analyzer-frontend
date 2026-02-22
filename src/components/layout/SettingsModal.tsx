@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { X, Settings2, CheckCircle2, ServerCrash, Loader2, Database, Bot } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { toast } from 'react-hot-toast';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -65,9 +66,9 @@ export default function SettingsModal({ isOpen, onClose, apiUrl }: SettingsModal
     try {
       await axios.put(`${apiUrl}/system/config?ui_theme=${config.ui_theme}&default_model=${config.default_model}`);
       setThemeBase(config.ui_theme);
-      alert("Configurações salvas com sucesso!");
+      toast.success("Configurações salvas com sucesso!");
     } catch {
-      alert("Erro ao salvar configurações.");
+      toast.error("Erro ao salvar configurações.");
     } finally {
       setLoading(false);
       onClose();

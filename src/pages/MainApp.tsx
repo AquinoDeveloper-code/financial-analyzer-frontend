@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation, useOutletContext, Link } from "react-router-dom";
 import { PlusCircle } from "lucide-react";
+import { toast } from 'react-hot-toast';
 import SummaryCards from "../components/dashboard/SummaryCards";
 import InsightsPanel from "../components/dashboard/InsightsPanel";
 import ExpensesRanking from "../components/dashboard/ExpensesRanking";
@@ -59,7 +60,7 @@ export default function MainApp() {
       const response = await axios.get(`${apiUrl}/documents/${docHash}`);
       setResult(response.data.data);
     } catch {
-      alert("Erro ao carregar documento histórico");
+      toast.error("Erro ao carregar documento histórico");
     } finally {
       setLoading(false);
     }
@@ -99,7 +100,7 @@ export default function MainApp() {
   }
 
   return (
-    <section className="col-span-1 lg:col-span-3 animate-fade-in space-y-6">
+    <section className="print:h-auto print:block print:overflow-visible col-span-1 lg:col-span-3 animate-fade-in space-y-6">
       
       {/* Cabeçalho do Documento e Botões de Ação */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { TrendingUp, Mail, Lock } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 export default function Register() {
   const [firstName, setFirstName] = useState('');
@@ -37,7 +38,7 @@ export default function Register() {
         first_name: firstName,
         last_name: lastName
       });
-      alert('Cadastro realizado com sucesso! Faça login para continuar.');
+      toast.success('Cadastro realizado com sucesso! Faça login para continuar.');
       navigate('/login');
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import React from 'react';
+import { useOutletContext } from 'react-router-dom';
 import UploadSection from '../components/dashboard/UploadSection';
+import { useProcessing } from '../context/ProcessingContext';
 
 interface LayoutContext {
   refreshLayout: () => void;
@@ -9,35 +9,15 @@ interface LayoutContext {
 }
 
 export default function NewDocument() {
-  const [loading, setLoading] = useState(false);
-  const { apiUrl, refreshLayout } = useOutletContext<LayoutContext>();
-  const navigate = useNavigate();
+  const { apiUrl } = useOutletContext<LayoutContext>();
+  const { isProcessing, processDocument } = useProcessing();
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
     const formData = new FormData();
     formData.append("file", file);
-    await processData(formData);
-  };
-
-  const processData = async (formData: FormData) => {
-    setLoading(true);
-    try {
-      const response = await axios.post(`${apiUrl}/documents/process`, formData);
-      refreshLayout(); 
-      // Redirect to home explicitly loading the newly returned ID if possible
-      const newDocId = response.data?.data?.document_id || response.data?.data?.doc_hash;
-      if (newDocId) {
-        navigate(`/?doc=${newDocId}`);
-      } else {
-        navigate(`/`);
-      }
-    } catch {
-      alert("Erro ao processar documento. Verifique se a API está rodando e se há um modelo LLM acessível.");
-    } finally {
-      setLoading(false);
-    }
+    await processDocument(formData, apiUrl);
   };
 
   return (
@@ -48,7 +28,7 @@ export default function NewDocument() {
       </div>
       <UploadSection
         handleFileUpload={handleFileUpload}
-        loading={loading}
+        loading={isProcessing}
       />
     </div>
   );

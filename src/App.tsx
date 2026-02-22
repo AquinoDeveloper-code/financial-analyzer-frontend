@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
 import { ThemeProvider } from "./context/ThemeContext";
 import { AuthProvider } from "./context/AuthContext";
+import { ProcessingProvider } from "./context/ProcessingContext";
 
 function App() {
   return (
@@ -18,7 +19,11 @@ function App() {
             <Route path="/register" element={<Register />} />
             
             <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<RootLayout />}>
+              <Route path="/" element={
+                 <ProcessingProvider>
+                    <RootLayout />
+                 </ProcessingProvider>
+              }>
                 <Route index element={<MainApp />} />
                 <Route path="new" element={<NewDocument />} />
               </Route>

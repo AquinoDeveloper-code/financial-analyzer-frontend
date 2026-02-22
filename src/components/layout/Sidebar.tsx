@@ -1,4 +1,5 @@
-import { History, ChevronRight, Trash2 } from 'lucide-react';
+import { History, ChevronRight, Trash2, Loader2 } from 'lucide-react';
+import { useProcessing } from '../../context/ProcessingContext';
 
 interface SidebarProps {
   history: Array<{ doc_hash: string; tipo: string; created_at: string }>;
@@ -7,6 +8,8 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ history, loadDocument, deleteDocument }: SidebarProps) {
+  const { isProcessing } = useProcessing();
+
   return (
     <aside className="w-64 bg-white border-r border-slate-200 h-screen sticky top-0 md:flex flex-col hidden shadow-sm">
       <div className="p-5 border-b border-slate-100 flex items-center gap-2 text-slate-800 font-bold bg-slate-50">
@@ -14,7 +17,18 @@ export default function Sidebar({ history, loadDocument, deleteDocument }: Sideb
         <span>Histórico</span>
       </div>
       <div className="flex-1 overflow-y-auto p-4 space-y-2 relative no-scrollbar">
-        {history.length === 0 ? (
+        
+        {/* Card Fake de Processamento */}
+        {isProcessing && (
+          <div className="w-full text-left p-3 rounded-lg bg-emerald-50 border border-emerald-200 shadow-sm flex items-center justify-between animate-pulse">
+            <div className="flex-1 overflow-hidden">
+              <p className="text-sm font-semibold text-emerald-800 flex items-center gap-1.5"><Loader2 size={14} className="animate-spin" /> Analisando Documento...</p>
+              <p className="text-xs text-emerald-600 mt-0.5">Extraindo via IA</p>
+            </div>
+          </div>
+        )}
+
+        {history.length === 0 && !isProcessing ? (
           <div className="flex flex-col items-center justify-center h-full text-slate-400">
             <History size={32} className="mb-2 opacity-20" />
             <p className="text-sm font-medium">Nenhum documento</p>

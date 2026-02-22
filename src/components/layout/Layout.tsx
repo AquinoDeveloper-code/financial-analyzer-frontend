@@ -21,13 +21,13 @@ export default function Layout({ children, history, loadDocument, deleteDocument
   const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
   return (
-    <div className="flex h-screen bg-slate-50 text-slate-900 font-sans overflow-hidden">
+    <div className="flex print:h-auto print:block print:overflow-visible h-screen bg-slate-50 text-slate-900 font-sans overflow-hidden">
       
       {/* Left Navigation Menu */}
       <NavSidebar />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden transition-all duration-300">
+      <div className="flex-1 print:h-auto print:block print:overflow-visible flex flex-col h-full overflow-hidden transition-all duration-300">
         <Header 
           stats={stats} 
           onOpenSettings={() => setIsSettingsOpen(true)} 
@@ -35,7 +35,7 @@ export default function Layout({ children, history, loadDocument, deleteDocument
           isHistoryOpen={isHistoryOpen}
         />
         
-        <main className="flex-1 overflow-y-auto p-4 md:p-8">
+        <main className="flex-1 print:overflow-visible overflow-y-auto p-4 md:p-8">
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
             {children}
           </div>
