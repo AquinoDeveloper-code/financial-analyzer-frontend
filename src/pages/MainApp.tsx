@@ -19,6 +19,7 @@ interface ApiResult {
     recorrencias: Array<{ frequencia: string; descricao: string; valor_medio: number }>;
   };
   insights: string[];
+  filename: string;
   transacoes: Array<{
     data: string;
     descricao: string;
@@ -64,6 +65,10 @@ export default function MainApp() {
     }
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   if (loading) {
     return (
       <div className="col-span-1 lg:col-span-3 min-h-[50vh] flex flex-col items-center justify-center animate-pulse">
@@ -95,6 +100,25 @@ export default function MainApp() {
 
   return (
     <section className="col-span-1 lg:col-span-3 animate-fade-in space-y-6">
+      
+      {/* Cabeçalho do Documento e Botões de Ação */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+        <div>
+          <h2 className="text-xl font-bold text-slate-800">
+            {result.filename || "Análise de Texto Manual"}
+          </h2>
+          <p className="text-sm text-slate-500">
+            Tempo processamento IA: {(result.processing_time_ms / 1000).toFixed(2)}s
+          </p>
+        </div>
+        <button
+          onClick={handlePrint}
+          className="print:hidden bg-white hover:bg-slate-50 text-slate-700 font-medium py-2 px-4 rounded-xl border border-slate-200 shadow-sm transition-all"
+        >
+          Exportar PDF (Imprimir)
+        </button>
+      </div>
+
       <SummaryCards sumario={result.sumario} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

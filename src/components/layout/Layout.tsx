@@ -20,8 +20,6 @@ export default function Layout({ children, history, loadDocument, deleteDocument
 
   return (
     <div className="flex h-screen bg-slate-50 text-slate-900 font-sans overflow-hidden">
-      <Sidebar history={history} loadDocument={loadDocument} deleteDocument={deleteDocument} />
-      
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         <Header stats={stats} onOpenSettings={() => setIsSettingsOpen(true)} />
         
@@ -31,6 +29,8 @@ export default function Layout({ children, history, loadDocument, deleteDocument
           </div>
         </main>
       </div>
+
+      <Sidebar history={history} loadDocument={loadDocument} deleteDocument={deleteDocument} />
 
       <SettingsModal 
         isOpen={isSettingsOpen} 
