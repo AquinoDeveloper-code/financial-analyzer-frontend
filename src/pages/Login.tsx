@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { TrendingUp, Mail, Lock } from 'lucide-react';
+import { PieChart, Mail, Lock } from 'lucide-react';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -48,10 +48,13 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
         <div>
-          <div className="mx-auto h-12 w-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-            <TrendingUp size={28} className="text-emerald-600" />
+          <div className="mx-auto flex flex-col items-center justify-center gap-3">
+            <div className="h-16 w-16 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg">
+              <PieChart size={36} className="text-emerald-400" />
+            </div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 mt-2">FinAnalyzer</h1>
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900">
+          <h2 className="mt-8 text-center text-xl font-bold text-slate-700">
             Acesse o sistema
           </h2>
           <p className="mt-2 text-center text-sm text-slate-500">

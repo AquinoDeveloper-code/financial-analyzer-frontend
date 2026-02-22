@@ -12,10 +12,20 @@ export default function NavSidebar() {
   };
 
   const getUserInitial = () => {
+    if (user?.first_name) {
+      return user.first_name.charAt(0).toUpperCase();
+    }
     if (user && user.email) {
       return user.email.charAt(0).toUpperCase();
     }
     return 'U';
+  };
+  
+  const getDisplayName = () => {
+    if (user?.first_name && user?.last_name) {
+      return `${user.first_name} ${user.last_name}`;
+    }
+    return user?.email || 'Usuário';
   };
   const routes = [
     { name: 'Dashboard', path: '/', icon: <Home size={20} /> },
@@ -56,8 +66,8 @@ export default function NavSidebar() {
             <span className="text-slate-300 font-bold text-sm">{getUserInitial()}</span>
           </div>
           <div className="hidden md:block overflow-hidden">
-            <p className="text-sm font-medium text-slate-300 truncate w-full" title={user?.email}>
-              {user?.email || 'Usuário'}
+            <p className="text-sm font-medium text-slate-300 truncate w-full" title={getDisplayName()}>
+              {getDisplayName()}
             </p>
             <p className="text-xs text-slate-500">
               {user?.is_admin === "1" ? "Administrador" : "Membro"}

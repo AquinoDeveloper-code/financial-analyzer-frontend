@@ -10,22 +10,14 @@ interface LayoutContext {
 
 export default function NewDocument() {
   const [loading, setLoading] = useState(false);
-  const [textInput, setTextInput] = useState("");
   const { apiUrl, refreshLayout } = useOutletContext<LayoutContext>();
   const navigate = useNavigate();
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
     const formData = new FormData();
     formData.append("file", file);
-    await processData(formData);
-  };
-
-  const handleTextSubmit = async () => {
-    const formData = new FormData();
-    formData.append("raw_text", textInput);
     await processData(formData);
   };
 
@@ -56,9 +48,6 @@ export default function NewDocument() {
       </div>
       <UploadSection
         handleFileUpload={handleFileUpload}
-        textInput={textInput}
-        setTextInput={setTextInput}
-        handleTextSubmit={handleTextSubmit}
         loading={loading}
       />
     </div>

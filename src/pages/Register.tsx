@@ -4,6 +4,8 @@ import axios from 'axios';
 import { TrendingUp, Mail, Lock } from 'lucide-react';
 
 export default function Register() {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -29,7 +31,12 @@ export default function Register() {
     setLoading(true);
 
     try {
-      await axios.post(`${apiUrl}/auth/register`, { email, password });
+      await axios.post(`${apiUrl}/auth/register`, { 
+        email, 
+        password,
+        first_name: firstName,
+        last_name: lastName
+      });
       alert('Cadastro realizado com sucesso! Faça login para continuar.');
       navigate('/login');
     } catch (err: unknown) {
@@ -66,6 +73,33 @@ export default function Register() {
           )}
           
           <div className="space-y-4">
+            <div className="flex gap-4">
+              <div className="relative flex-1">
+                <input
+                  id="first-name"
+                  name="first-name"
+                  type="text"
+                  required
+                  className="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-300 placeholder-slate-500 text-slate-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                  placeholder="Nome"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+              </div>
+              <div className="relative flex-1">
+                <input
+                  id="last-name"
+                  name="last-name"
+                  type="text"
+                  required
+                  className="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-300 placeholder-slate-500 text-slate-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                  placeholder="Sobrenome"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+              </div>
+            </div>
+            
             <div className="relative">
               <Mail className="absolute left-3 top-3 text-slate-400" size={20} />
               <input
@@ -110,7 +144,7 @@ export default function Register() {
           <div>
             <button
               type="submit"
-              disabled={loading || !email || !password || !confirmPassword}
+              disabled={loading || !firstName || !lastName || !email || !password || !confirmPassword}
               className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               {loading ? 'Cadastrando...' : 'Cadastrar agora'}
