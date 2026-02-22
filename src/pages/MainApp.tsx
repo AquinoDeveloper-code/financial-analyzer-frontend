@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import Layout from "../components/layout/Layout";
-import UploadSection from "../components/dashboard/UploadSection";
+import { useLocation, useOutletContext, Link } from "react-router-dom";
+import { PlusCircle } from "lucide-react";
 import SummaryCards from "../components/dashboard/SummaryCards";
 import InsightsPanel from "../components/dashboard/InsightsPanel";
 import ExpensesRanking from "../components/dashboard/ExpensesRanking";
@@ -29,34 +29,28 @@ interface ApiResult {
   processing_time_ms: number;
 }
 
+interface LayoutContext {
+  refreshLayout: () => void;
+  apiUrl: string;
+}
+
 export default function MainApp() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ApiResult | null>(null);
-  const [textInput, setTextInput] = useState("");
-  const [stats, setStats] = useState<{
-    total_documents_processed: number;
-    average_processing_time_ms: number;
-  } | null>(null);
-  const [history, setHistory] = useState<Array<{ doc_hash: string; tipo: string; created_at: string }>>([]);
-  const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
+  const { apiUrl } = useOutletContext<LayoutContext>();
+  const location = useLocation();
 
-  const fetchStats = async () => {
-    try {
-      const response = await axios.get(`${apiUrl}/documents/stats`);
-      setStats(response.data.data);
-    } catch {
-      console.error("Erro ao buscar estatísticas");
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const docHash = queryParams.get('doc');
+    
+    if (docHash) {
+      loadDocument(docHash);
+    } else {
+      setResult(null);
     }
-  };
-
-  const fetchHistory = async () => {
-    try {
-      const response = await axios.get(`${apiUrl}/documents/`);
-      setHistory(response.data.data);
-    } catch {
-      console.error("Erro ao buscar histórico");
-    }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
 
   const loadDocument = async (docHash: string) => {
     setLoading(true);
@@ -70,101 +64,58 @@ export default function MainApp() {
     }
   };
 
-  useEffect(() => {
-    fetchStats();
-    fetchHistory();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  if (loading) {
+    return (
+      <div className="col-span-1 lg:col-span-3 min-h-[50vh] flex flex-col items-center justify-center animate-pulse">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-500 mb-4"></div>
+        <p className="text-slate-500 font-medium">Carregando análise...</p>
+      </div>
+    );
+  }
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-    await processData(formData);
-  };
-
-  const handleTextSubmit = async () => {
-    const formData = new FormData();
-    formData.append("raw_text", textInput);
-    await processData(formData);
-  };
-
-  const processData = async (formData: FormData) => {
-    setLoading(true);
-    try {
-      const response = await axios.post(`${apiUrl}/documents/process`, formData);
-      setResult(response.data.data);
-      fetchStats(); 
-      fetchHistory(); 
-    } catch {
-      alert("Erro ao processar documento. Verifique se a API está rodando.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const deleteDocument = async (docHash: string) => {
-    if (!window.confirm("Deseja realmente excluir este documento do histórico e banco de dados?")) return;
-    try {
-      setLoading(true);
-      await axios.delete(`${apiUrl}/documents/${docHash}`);
-      // Refresh
-      fetchHistory();
-      if (result && result.processing_time_ms && result.processing_time_ms > 0) {
-        // user had this document loaded, let's clear it
-        setResult(null);
-      }
-    } catch {
-      alert("Erro ao excluir o documento histórico");
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (!result) {
+    return (
+      <div className="col-span-1 lg:col-span-3 min-h-[60vh] flex flex-col items-center justify-center text-center p-8 bg-white border border-slate-200 border-dashed rounded-3xl opacity-80 mt-4">
+        <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mb-6">
+          <PlusCircle className="text-emerald-500" size={36} strokeWidth={1.5} />
+        </div>
+        <h2 className="text-2xl font-bold text-slate-800 mb-2">Nenhum documento selecionado</h2>
+        <p className="text-slate-500 max-w-sm mb-8 text-lg">Selecione uma análise no histórico lateral ou inicie a criação de um novo documento.</p>
+        
+        <Link 
+          to="/new" 
+          className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-8 rounded-xl transition-all shadow-md shadow-emerald-600/20 active:scale-95 flex items-center gap-2"
+        >
+          <PlusCircle size={20} />
+          <span>Fazer Nova Análise</span>
+        </Link>
+      </div>
+    );
+  }
 
   return (
-    <Layout history={history} loadDocument={loadDocument} deleteDocument={deleteDocument} stats={stats}>
-      <UploadSection
-        handleFileUpload={handleFileUpload}
-        textInput={textInput}
-        setTextInput={setTextInput}
-        handleTextSubmit={handleTextSubmit}
-        loading={loading}
-      />
+    <section className="col-span-1 lg:col-span-3 animate-fade-in space-y-6">
+      <SummaryCards sumario={result.sumario} />
 
-      <section className="lg:col-span-2">
-        {result && !loading && (
-          <div className="animate-fade-in space-y-6">
-            <SummaryCards sumario={result.sumario} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="md:col-span-2">
+          <InsightsPanel 
+            insights={result.insights} 
+            alertas={result.sumario.alertas} 
+            processingTimeMs={result.processing_time_ms} 
+          />
+        </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Painel de Insights e Alertas */}
-              <div className="md:col-span-2">
-                <InsightsPanel 
-                  insights={result.insights} 
-                  alertas={result.sumario.alertas} 
-                  processingTimeMs={result.processing_time_ms} 
-                />
-              </div>
+        <div className="md:col-span-2">
+          <ExpensesRanking 
+            topCategorias={result.sumario.top_categorias} 
+            maioresGastos={result.sumario.maiores_gastos} 
+          />
+        </div>
 
-              {/* Ranking de Despesas */}
-              <div className="md:col-span-2">
-                <ExpensesRanking 
-                  topCategorias={result.sumario.top_categorias} 
-                  maioresGastos={result.sumario.maiores_gastos} 
-                />
-              </div>
-
-              {/* Recorrências */}
-              <RecurringExpenses recorrencias={result.sumario.recorrencias} />
-
-              {/* Tabela de Transações */}
-              <TransactionsTable transacoes={result.transacoes} />
-            </div>
-          </div>
-        )}
-      </section>
-    </Layout>
+        <RecurringExpenses recorrencias={result.sumario.recorrencias} />
+        <TransactionsTable transacoes={result.transacoes} />
+      </div>
+    </section>
   );
 }
