@@ -78,14 +78,14 @@ export default function NotificationCenter() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl z-50 overflow-hidden font-sans origin-top-right animate-in fade-in slide-in-from-top-2">
+        <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 overflow-hidden font-sans origin-top-right animate-in fade-in slide-in-from-top-2">
           
-          <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
-            <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+          <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50">
+            <h3 className="font-bold text-slate-800 flex items-center gap-2">
               <Bell size={18} className="text-indigo-500"/>
               Notificações
               {unreadCount > 0 && (
-                <span className="px-2 py-0.5 text-[10px] font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300 rounded-full">
+                <span className="px-2 py-0.5 text-[10px] font-bold bg-indigo-100 text-indigo-700 rounded-full">
                   {unreadCount} Novas
                 </span>
               )}
@@ -110,30 +110,30 @@ export default function NotificationCenter() {
             </div>
           </div>
 
-          <div className="max-h-[350px] overflow-y-auto custom-scrollbar bg-white dark:bg-slate-800">
+          <div className="max-h-[350px] overflow-y-auto custom-scrollbar bg-white">
             {notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-10 opacity-60">
                 <Bell size={32} strokeWidth={1} className="text-slate-400 mb-2"/>
                 <p className="text-slate-500 text-sm font-medium">Nenhuma notificação por aqui.</p>
               </div>
             ) : (
-              <ul className="divide-y divide-slate-100 dark:divide-slate-700">
+              <ul className="divide-y divide-slate-100">
                 {notifications.map(n => (
                   <li 
                     key={n.id} 
-                    className={`p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors flex gap-3 ${!n.read ? 'bg-indigo-50/30 dark:bg-indigo-900/10' : ''}`}
+                    className={`p-4 hover:bg-slate-50 transition-colors flex gap-3 ${!n.read ? 'bg-indigo-50/50' : ''}`}
                     onClick={() => markAsRead(n.id)}
                   >
                     <div className="mt-1 flex-shrink-0">
-                      <div className={`p-1.5 rounded-full ${!n.read ? 'bg-white shadow-sm border border-slate-100 dark:border-slate-600 dark:bg-slate-700' : 'bg-transparent'}`}>
+                      <div className={`p-1.5 rounded-full ${!n.read ? 'bg-white shadow-sm border border-slate-100' : 'bg-transparent'}`}>
                         {getIcon(n.type)}
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm ${!n.read ? 'font-bold text-slate-900 dark:text-white' : 'font-medium text-slate-700 dark:text-slate-300'}`}>
+                      <p className={`text-sm ${!n.read ? 'font-bold text-slate-900' : 'font-medium text-slate-700'}`}>
                         {n.title}
                       </p>
-                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-slate-600 mt-0.5 line-clamp-2 leading-relaxed">
                         {n.message}
                       </p>
                       <p className="text-[10px] text-slate-400 mt-2 font-medium">
@@ -149,7 +149,7 @@ export default function NotificationCenter() {
             )}
           </div>
           
-          <div className="p-3 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-center">
+          <div className="p-3 border-t border-slate-100 bg-slate-50 text-center">
             <p className="text-xs text-slate-500">Configurar preferências de aviso no Perfil.</p>
           </div>
         </div>

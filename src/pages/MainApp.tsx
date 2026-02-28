@@ -91,28 +91,37 @@ export default function MainApp() {
         <DailyQuoteSection apiUrl={apiUrl} />
         
         {/* Ações Rápidas - Nova Funcionalidade */}
-        <div className="col-span-1 lg:col-span-3 mb-2 animate-fade-in flex gap-4 overflow-x-auto pb-2 custom-scrollbar">
-          <Link to="/new" className="flex-1 bg-white border border-slate-200 hover:border-emerald-300 dark:bg-slate-800 dark:border-slate-700 p-4 rounded-2xl shadow-sm text-center transition-all hover:scale-[1.02]">
-            <div className="w-10 h-10 mx-auto bg-emerald-50 dark:bg-emerald-900/40 rounded-full flex items-center justify-center mb-2">
-              <PlusCircle className="text-emerald-500" size={20}/>
-            </div>
-            <h3 className="font-bold text-slate-800 dark:text-white text-sm">Nova Análise</h3>
-            <p className="text-xs text-slate-500 mt-1 line-clamp-2">Extraia dados de faturas.</p>
-          </Link>
-          <Link to="/reconciliation" className="flex-1 bg-white border border-slate-200 hover:border-indigo-300 dark:bg-slate-800 dark:border-slate-700 p-4 rounded-2xl shadow-sm text-center transition-all hover:scale-[1.02]">
-            <div className="w-10 h-10 mx-auto bg-indigo-50 dark:bg-indigo-900/40 rounded-full flex items-center justify-center mb-2">
-              <Bot className="text-indigo-500" size={20}/>
-            </div>
-            <h3 className="font-bold text-slate-800 dark:text-white text-sm">Conciliação</h3>
-            <p className="text-xs text-slate-500 mt-1 line-clamp-2">Cruzar transações bancárias.</p>
-          </Link>
-          <Link to="/market" className="flex-1 bg-white border border-slate-200 hover:border-amber-300 dark:bg-slate-800 dark:border-slate-700 p-4 rounded-2xl shadow-sm text-center transition-all hover:scale-[1.02]">
-            <div className="w-10 h-10 mx-auto bg-amber-50 dark:bg-amber-900/40 rounded-full flex items-center justify-center mb-2">
-              <span className="text-amber-500 text-lg">💡</span>
-            </div>
-            <h3 className="font-bold text-slate-800 dark:text-white text-sm">Mercado IA</h3>
-            <p className="text-xs text-slate-500 mt-1 line-clamp-2">Pergunte aos analistas AI.</p>
-          </Link>
+        <div className="col-span-1 lg:col-span-3 w-full max-w-5xl mx-auto mb-4 animate-fade-in">
+          <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-3 px-1 tracking-tight">Ferramentas de Acesso Rápido</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Link to="/new" className="group flex items-center p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl hover:border-emerald-500 dark:hover:border-emerald-500 hover:shadow-md transition-all cursor-pointer">
+              <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors mr-4 shrink-0">
+                <PlusCircle className="text-emerald-500 group-hover:text-white transition-colors" size={24}/>
+              </div>
+              <div className="text-left">
+                <h4 className="font-bold text-slate-800 dark:text-white text-base leading-tight group-hover:text-emerald-600 transition-colors">Nova Análise</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Extrair dados de faturas PDF</p>
+              </div>
+            </Link>
+            <Link to="/reconciliation" className="group flex items-center p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl hover:border-indigo-500 dark:hover:border-indigo-500 hover:shadow-md transition-all cursor-pointer">
+              <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-colors mr-4 shrink-0">
+                <Bot className="text-indigo-500 group-hover:text-white transition-colors" size={24}/>
+              </div>
+              <div className="text-left">
+                <h4 className="font-bold text-slate-800 dark:text-white text-base leading-tight group-hover:text-indigo-600 transition-colors">Conciliação</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Cruzar transações entre contas</p>
+              </div>
+            </Link>
+            <Link to="/market" className="group flex items-center p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl hover:border-amber-500 dark:hover:border-amber-500 hover:shadow-md transition-all cursor-pointer">
+              <div className="w-12 h-12 bg-amber-50 dark:bg-amber-900/30 rounded-xl flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors mr-4 shrink-0">
+                <span className="text-amber-500 text-xl group-hover:text-white transition-colors">💡</span>
+              </div>
+              <div className="text-left">
+                <h4 className="font-bold text-slate-800 dark:text-white text-base leading-tight group-hover:text-amber-600 transition-colors">Consultor IA</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Análise e dicas de Mercado</p>
+              </div>
+            </Link>
+          </div>
         </div>
         <div className="col-span-1 lg:col-span-3 min-h-[40vh] flex flex-col items-center justify-center text-center p-8 bg-white border border-slate-200 border-dashed rounded-3xl opacity-80">
           <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mb-6">
