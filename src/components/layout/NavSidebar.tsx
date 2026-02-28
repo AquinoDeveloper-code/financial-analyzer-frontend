@@ -1,4 +1,4 @@
-import { Home, PlusCircle, PieChart, LogOut } from 'lucide-react';
+import { Home, PlusCircle, PieChart, LogOut, PiggyBank, User, Users, TrendingUp, Globe, ArrowRightLeft } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
@@ -28,13 +28,22 @@ export default function NavSidebar() {
     return user?.email || 'Usuário';
   };
   const routes = [
-    { name: 'Dashboard', path: '/', icon: <Home size={20} /> },
+    { name: 'Home', path: '/', icon: <Home size={20} /> },
     { name: 'Nova Análise', path: '/new', icon: <PlusCircle size={20} /> },
+    { name: 'Conciliação', path: '/reconciliation', icon: <ArrowRightLeft size={20} /> },
+    { name: 'Carteira & Metas', path: '/goals', icon: <PiggyBank size={20} /> },
+    { name: 'Inteligência (IA)', path: '/market', icon: <TrendingUp size={20} /> },
+    { name: 'Câmbio & Forex', path: '/forex', icon: <Globe size={20} /> },
+    { name: 'Comunidade', path: '/community', icon: <Users size={20} /> },
+    { name: 'Meu Perfil', path: '/profile', icon: <User size={20} /> },
   ];
 
   return (
-    <aside className="w-20 md:w-64 bg-slate-900 text-slate-300 h-screen flex flex-col shadow-xl flex-shrink-0 transition-all">
-      <div className="p-4 md:p-6 border-b border-slate-800 flex items-center justify-center md:justify-start">
+    <aside 
+      className="w-20 md:w-64 text-slate-300 h-screen flex flex-col shadow-xl flex-shrink-0 transition-all font-nav border-r border-slate-800/50"
+      style={{ backgroundColor: 'var(--nav-sidebar-bg)' }}
+    >
+      <div className="p-4 md:p-6 border-b border-white/10 flex items-center justify-center md:justify-start">
         <PieChart size={24} className="text-emerald-400" />
         <span className="ml-3 font-bold text-white text-lg hidden md:block tracking-tight">FinAnalyzer</span>
       </div>
@@ -60,11 +69,15 @@ export default function NavSidebar() {
         ))}
       </nav>
       
-      <div className="p-4 border-t border-slate-800 flex flex-col items-center md:items-start md:flex-row md:justify-between gap-4">
+      <div className="p-4 border-t border-white/10 flex flex-col items-center md:items-start md:flex-row md:justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-800 flex items-center justify-center flex-shrink-0 border border-slate-700">
+          <button
+            onClick={() => navigate('/profile')}
+            className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-800 flex items-center justify-center flex-shrink-0 border border-slate-700 hover:border-emerald-500 transition-colors"
+            title="Ver Perfil"
+          >
             <span className="text-slate-300 font-bold text-sm">{getUserInitial()}</span>
-          </div>
+          </button>
           <div className="hidden md:block overflow-hidden">
             <p className="text-sm font-medium text-slate-300 truncate w-full" title={getDisplayName()}>
               {getDisplayName()}

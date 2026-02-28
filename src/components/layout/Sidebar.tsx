@@ -1,20 +1,36 @@
-import { History, ChevronRight, Trash2, Loader2 } from 'lucide-react';
 import { useProcessing } from '../../context/ProcessingContext';
+import { History, ChevronRight, Trash2, Loader2, Eraser } from 'lucide-react';
 
 interface SidebarProps {
-  history: Array<{ doc_hash: string; tipo: string; created_at: string }>;
+  history: Array<{ doc_hash: string; tipo: string; filename?: string; created_at: string }>;
   loadDocument: (docHash: string) => void;
   deleteDocument: (docHash: string) => void;
+  onClearHistoryLocal: () => void;
 }
 
-export default function Sidebar({ history, loadDocument, deleteDocument }: SidebarProps) {
+export default function Sidebar({ history, loadDocument, deleteDocument, onClearHistoryLocal }: SidebarProps) {
   const { isProcessing } = useProcessing();
 
   return (
-    <aside className="w-64 bg-white border-r border-slate-200 h-screen sticky top-0 md:flex flex-col hidden shadow-sm">
-      <div className="p-5 border-b border-slate-100 flex items-center gap-2 text-slate-800 font-bold bg-slate-50">
-        <History size={18} className="text-emerald-600" />
-        <span>Histórico</span>
+    <aside 
+      className="w-full h-full min-h-[400px] md:flex flex-col hidden transition-colors"
+      style={{ backgroundColor: 'var(--nav-header-bg)' }}
+    >
+      <div className="p-5 border-b border-slate-200/50 flex items-center justify-between font-bold bg-white/80 backdrop-blur-sm">
+        <div className="flex items-center gap-2 text-slate-800">
+           <History size={18} className="text-emerald-600" />
+           <span>Histórico</span>
+        </div>
+        
+        {history?.length > 0 && (
+          <button 
+             onClick={onClearHistoryLocal}
+             className="text-slate-400 hover:text-emerald-500 transition-colors p-1.5 rounded-md hover:bg-emerald-50"
+             title="Limpar Histórico da Tela"
+          >
+             <Eraser size={16} />
+          </button>
+        )}
       </div>
       <div className="flex-1 overflow-y-auto p-4 space-y-2 relative no-scrollbar">
         
@@ -28,13 +44,13 @@ export default function Sidebar({ history, loadDocument, deleteDocument }: Sideb
           </div>
         )}
 
-        {history.length === 0 && !isProcessing ? (
+        {!history || history.length === 0 && !isProcessing ? (
           <div className="flex flex-col items-center justify-center h-full text-slate-400">
             <History size={32} className="mb-2 opacity-20" />
             <p className="text-sm font-medium">Nenhum documento</p>
           </div>
         ) : (
-          history.map((doc, idx) => (
+          history?.map((doc, idx) => (
             <div
               key={idx}
               className="w-full text-left p-3 rounded-lg bg-white hover:bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-all shadow-sm hover:shadow flex items-center justify-between group"
@@ -43,7 +59,7 @@ export default function Sidebar({ history, loadDocument, deleteDocument }: Sideb
                 onClick={() => loadDocument(doc.doc_hash)}
                 className="flex-1 overflow-hidden"
               >
-                <p className="text-sm font-medium text-slate-700 capitalize truncate text-left">{doc.tipo}</p>
+                <p className="text-sm font-medium text-slate-700 capitalize truncate text-left">{doc.filename || doc.tipo}</p>
                 <p className="text-xs text-slate-500 mt-0.5 text-left">{new Date(doc.created_at).toLocaleDateString()}</p>
               </button>
               

@@ -29,11 +29,15 @@ function toRgbString(color: {r: number, g: number, b: number}) {
 type ThemeContextType = {
   themeBase: string;
   setThemeBase: (theme: string) => void;
+  navThemeBase: string;
+  setNavThemeBase: (theme: string) => void;
 };
 
 const ThemeContext = createContext<ThemeContextType>({ 
   themeBase: 'emerald',
-  setThemeBase: () => {} 
+  setThemeBase: () => {},
+  navThemeBase: '#0f172a',
+  setNavThemeBase: () => {}
 });
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -43,6 +47,7 @@ export function useTheme() {
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [themeBase, setThemeBase] = useState('emerald');
+  const [navThemeBase, setNavThemeBase] = useState('#0f172a');
   const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
   useEffect(() => {
@@ -51,6 +56,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       try {
         const response = await axios.get(`${apiUrl}/system/config`);
         setThemeBase(response.data.data.ui_theme || 'emerald');
+        setNavThemeBase(response.data.data.nav_theme || '#0f172a');
       } catch {
         console.warn("ThemeProvider: API backend indisponível para config de cores");
       }
@@ -59,30 +65,34 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [apiUrl]);
 
   const customStyles = useMemo(() => {
-    if (!themeBase.startsWith('#')) return {};
-    
-    const baseColor = hexToRgb(themeBase);
-    if (!baseColor) return {};
+    const styles: Record<string, string> = {
+      '--nav-sidebar-bg': navThemeBase,
+      '--nav-header-bg': navThemeBase === '#0f172a' ? '#ffffff' : navThemeBase,
+    };
 
-    // Create a dynamic scale based on the hex color
-    return {
-      '--color-emerald-50': toRgbString(adjustColor(baseColor, 150)),
-      '--color-emerald-100': toRgbString(adjustColor(baseColor, 120)),
-      '--color-emerald-200': toRgbString(adjustColor(baseColor, 90)),
-      '--color-emerald-300': toRgbString(adjustColor(baseColor, 60)),
-      '--color-emerald-400': toRgbString(adjustColor(baseColor, 30)),
-      '--color-emerald-500': toRgbString(baseColor),
-      '--color-emerald-600': toRgbString(adjustColor(baseColor, -30)),
-      '--color-emerald-700': toRgbString(adjustColor(baseColor, -60)),
-      '--color-emerald-800': toRgbString(adjustColor(baseColor, -90)),
-      '--color-emerald-900': toRgbString(adjustColor(baseColor, -120)),
-    } as React.CSSProperties;
-  }, [themeBase]);
+    if (themeBase.startsWith('#')) {
+      const baseColor = hexToRgb(themeBase);
+      if (baseColor) {
+        styles['--color-emerald-50'] = toRgbString(adjustColor(baseColor, 150));
+        styles['--color-emerald-100'] = toRgbString(adjustColor(baseColor, 120));
+        styles['--color-emerald-200'] = toRgbString(adjustColor(baseColor, 90));
+        styles['--color-emerald-300'] = toRgbString(adjustColor(baseColor, 60));
+        styles['--color-emerald-400'] = toRgbString(adjustColor(baseColor, 30));
+        styles['--color-emerald-500'] = toRgbString(baseColor);
+        styles['--color-emerald-600'] = toRgbString(adjustColor(baseColor, -30));
+        styles['--color-emerald-700'] = toRgbString(adjustColor(baseColor, -60));
+        styles['--color-emerald-800'] = toRgbString(adjustColor(baseColor, -90));
+        styles['--color-emerald-900'] = toRgbString(adjustColor(baseColor, -120));
+      }
+    }
+    
+    return styles as React.CSSProperties;
+  }, [themeBase, navThemeBase]);
 
   const themeClass = themeBase.startsWith('#') ? 'theme-custom' : `theme-${themeBase}`;
 
   return (
-    <ThemeContext.Provider value={{ themeBase, setThemeBase }}>
+    <ThemeContext.Provider value={{ themeBase, setThemeBase, navThemeBase, setNavThemeBase }}>
       <div className={themeClass} style={customStyles}>
         {children}
       </div>

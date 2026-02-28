@@ -7,6 +7,8 @@ interface User {
   first_name?: string;
   last_name?: string;
   is_admin: string;
+  is_active: string;
+  avatar_url?: string;
 }
 
 interface AuthContextType {
@@ -14,6 +16,7 @@ interface AuthContextType {
   token: string | null;
   login: (token: string, userData: User) => void;
   logout: () => void;
+  refreshUser: () => Promise<void>;
   isAuthenticated: boolean;
   isLoading: boolean;
 }
@@ -63,6 +66,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setupAxiosInterceptors(newToken, logout);
   };
 
+  const refreshUser = async () => {
+    if (token) {
+      try {
+        const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
+        const res = await axios.get(`${apiUrl}/auth/me`);
+        setUser(res.data);
+      } catch { /* ignore */ }
+    }
+  };
+
   useEffect(() => {
     const fetchUser = async () => {
       if (token) {
@@ -83,7 +96,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [token]);
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isAuthenticated: !!token, isLoading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, refreshUser, isAuthenticated: !!token, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

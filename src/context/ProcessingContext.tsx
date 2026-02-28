@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 
 interface ProcessingContextType {
   isProcessing: boolean;
-  processDocument: (formData: FormData, apiUrl: string) => Promise<void>;
+  processDocument: (formData: FormData, apiUrl: string, refreshLayout?: () => void) => Promise<void>;
 }
 
 const ProcessingContext = createContext<ProcessingContextType>({
@@ -22,11 +22,15 @@ export function ProcessingProvider({ children }: { children: React.ReactNode }) 
   const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
 
-  const processDocument = async (formData: FormData, apiUrl: string) => {
+  const processDocument = async (formData: FormData, apiUrl: string, refreshLayout?: () => void) => {
     setIsProcessing(true);
     try {
       const response = await axios.post(`${apiUrl}/documents/process`, formData);
       const newDocId = response.data?.data?.document_id || response.data?.data?.doc_hash;
+      
+      if (refreshLayout) {
+        refreshLayout();
+      }
       
       toast.success("Análise Inteligente concluída com sucesso!");
       

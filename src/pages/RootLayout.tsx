@@ -42,29 +42,44 @@ export default function RootLayout() {
     navigate(`/?doc=${docHash}`);
   };
 
-  const deleteDocument = async (docHash: string) => {
-    if (!window.confirm("Deseja realmente excluir este documento do histórico e banco de dados?")) return;
-    try {
-      setLoading(true);
-      await axios.delete(`${apiUrl}/documents/${docHash}`);
-      fetchHistory();
-      
-      // se estivermos na Home com esse documento aberto, mandamos pra Home limpa
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('doc') === docHash) {
-        navigate('/');
-      }
-    } catch {
-      toast.error("Erro ao excluir o documento histórico");
-    } finally {
-      setLoading(false);
-    }
+  const deleteDocument = (docHash: string) => {
+    toast((t) => (
+      <div className="flex flex-col gap-2 p-1">
+        <p className="font-semibold text-slate-800 dark:text-slate-200">Excluir este documento?</p>
+        <p className="text-sm text-slate-500">Isso apagará a análise permanentemente do banco de dados.</p>
+        <div className="flex justify-end gap-2 mt-2">
+          <button onClick={() => toast.dismiss(t.id)} className="px-3 py-1.5 text-sm bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+          <button onClick={async () => {
+              toast.dismiss(t.id);
+              try {
+                setLoading(true);
+                await axios.delete(`${apiUrl}/documents/${docHash}`);
+                fetchHistory();
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('doc') === docHash) {
+                  navigate('/');
+                }
+                toast.success("Documento excluído com sucesso");
+              } catch {
+                toast.error("Erro ao excluir o documento");
+              } finally {
+                setLoading(false);
+              }
+          }} className="px-3 py-1.5 text-sm bg-red-500 text-white rounded hover:bg-red-600 shadow-sm transition-colors">Excluir</button>
+        </div>
+      </div>
+    ), { duration: Infinity });
+  };
+
+  const clearHistoryLocal = () => {
+    setHistory([]);
+    toast.success("Histórico da tela foi limpo temporariamente.");
   };
 
   return (
-    <Layout history={history} loadDocument={loadDocument} deleteDocument={deleteDocument} stats={stats}>
-      <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
-      <Outlet context={{ refreshLayout: () => { fetchHistory(); fetchStats(); }, apiUrl }} />
+    <Layout history={history} loadDocument={loadDocument} deleteDocument={deleteDocument} onClearHistoryLocal={clearHistoryLocal}>
+      <Toaster position="top-right" toastOptions={{ duration: 4000, style: { maxWidth: 500, wordBreak: 'break-word' } }} />
+      <Outlet context={{ refreshLayout: () => { fetchHistory(); fetchStats(); }, apiUrl, stats, history, loadDocument, deleteDocument, clearHistoryLocal }} />
       {loading && (
         <div className="fixed inset-0 bg-white/50 flex items-center justify-center z-50">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>

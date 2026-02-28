@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation, useOutletContext, Link } from "react-router-dom";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Bot } from "lucide-react";
 import { toast } from 'react-hot-toast';
 import SummaryCards from "../components/dashboard/SummaryCards";
 import InsightsPanel from "../components/dashboard/InsightsPanel";
 import ExpensesRanking from "../components/dashboard/ExpensesRanking";
 import TransactionsTable from "../components/dashboard/TransactionsTable";
 import RecurringExpenses from "../components/dashboard/RecurringExpenses";
+import ChatDrawer from "../components/dashboard/ChatDrawer";
+import DailyQuoteSection from "../components/dashboard/DailyQuoteSection";
+import { downloadPdfFromHtml } from "../utils/pdfGenerator";
 
 interface ApiResult {
   sumario: {
@@ -41,6 +44,7 @@ export default function MainApp() {
   const [result, setResult] = useState<ApiResult | null>(null);
   const { apiUrl } = useOutletContext<LayoutContext>();
   const location = useLocation();
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -67,7 +71,8 @@ export default function MainApp() {
   };
 
   const handlePrint = () => {
-    window.print();
+    if (!result) return;
+    downloadPdfFromHtml(result);
   };
 
   if (loading) {
@@ -81,21 +86,23 @@ export default function MainApp() {
 
   if (!result) {
     return (
-      <div className="col-span-1 lg:col-span-3 min-h-[60vh] flex flex-col items-center justify-center text-center p-8 bg-white border border-slate-200 border-dashed rounded-3xl opacity-80 mt-4">
-        <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mb-6">
-          <PlusCircle className="text-emerald-500" size={36} strokeWidth={1.5} />
+      <>
+        <DailyQuoteSection apiUrl={apiUrl} />
+        <div className="col-span-1 lg:col-span-3 min-h-[40vh] flex flex-col items-center justify-center text-center p-8 bg-white border border-slate-200 border-dashed rounded-3xl opacity-80">
+          <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mb-6">
+            <PlusCircle className="text-emerald-500" size={36} strokeWidth={1.5} />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-800 mb-2">Nenhum documento selecionado</h2>
+          <p className="text-slate-500 max-w-sm mb-8 text-lg">Selecione uma análise no histórico lateral ou inicie a criação de um novo documento.</p>
+          <Link 
+            to="/new" 
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-8 rounded-xl transition-all shadow-md shadow-emerald-600/20 active:scale-95 flex items-center gap-2"
+          >
+            <PlusCircle size={20} />
+            <span>Fazer Nova Análise</span>
+          </Link>
         </div>
-        <h2 className="text-2xl font-bold text-slate-800 mb-2">Nenhum documento selecionado</h2>
-        <p className="text-slate-500 max-w-sm mb-8 text-lg">Selecione uma análise no histórico lateral ou inicie a criação de um novo documento.</p>
-        
-        <Link 
-          to="/new" 
-          className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-8 rounded-xl transition-all shadow-md shadow-emerald-600/20 active:scale-95 flex items-center gap-2"
-        >
-          <PlusCircle size={20} />
-          <span>Fazer Nova Análise</span>
-        </Link>
-      </div>
+      </>
     );
   }
 
@@ -112,12 +119,20 @@ export default function MainApp() {
             Tempo processamento IA: {(result.processing_time_ms / 1000).toFixed(2)}s
           </p>
         </div>
-        <button
-          onClick={handlePrint}
-          className="print:hidden bg-white hover:bg-slate-50 text-slate-700 font-medium py-2 px-4 rounded-xl border border-slate-200 shadow-sm transition-all"
-        >
-          Exportar PDF (Imprimir)
-        </button>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => setIsChatOpen(true)}
+            className="flex items-center gap-2 print:hidden px-4 py-2 border border-emerald-200 text-emerald-700 bg-emerald-50 rounded-xl hover:bg-emerald-100 transition-colors shadow-sm font-medium"
+          >
+            <Bot size={18} /> Chat IA
+          </button>
+          <button
+            onClick={handlePrint}
+            className="print:hidden bg-white hover:bg-slate-50 text-slate-700 font-medium py-2 px-4 rounded-xl border border-slate-200 shadow-sm transition-all"
+          >
+            Exportar PDF (Imprimir)
+          </button>
+        </div>
       </div>
 
       <SummaryCards sumario={result.sumario} />
@@ -141,6 +156,13 @@ export default function MainApp() {
         <RecurringExpenses recorrencias={result.sumario.recorrencias} />
         <TransactionsTable transacoes={result.transacoes} />
       </div>
+
+      <ChatDrawer 
+        isOpen={isChatOpen} 
+        onClose={() => setIsChatOpen(false)} 
+        docHash={new URLSearchParams(location.search).get("doc") || ""} 
+        apiUrl={apiUrl} 
+      />
     </section>
   );
 }

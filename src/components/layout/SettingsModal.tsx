@@ -21,14 +21,16 @@ interface HealthState {
 export default function SettingsModal({ isOpen, onClose, apiUrl }: SettingsModalProps) {
   const [loading, setLoading] = useState(false);
   const [health, setHealth] = useState<HealthState | null>(null);
-  const { setThemeBase } = useTheme();
+  const { setThemeBase, setNavThemeBase } = useTheme();
   
-  const [config, setConfig] = useState<{ui_theme: string; default_model: string}>({
+  const [config, setConfig] = useState<{ui_theme: string; nav_theme: string; default_model: string}>({
     ui_theme: 'slate',
+    nav_theme: '#0f172a',
     default_model: 'llama3'
   });
 
   const [customHex, setCustomHex] = useState('#10b981'); // Default to emerald if opening picker
+  const [navHex, setNavHex] = useState('#0f172a'); // Default nav color
 
 
   useEffect(() => {
@@ -48,12 +50,14 @@ export default function SettingsModal({ isOpen, onClose, apiUrl }: SettingsModal
       ]);
       setHealth(healthRes.data);
       const theme = configRes.data.data.ui_theme || 'slate';
-      setConfig({...configRes.data.data, ui_theme: theme});
+      const navTheme = configRes.data.data.nav_theme || '#0f172a';
+      setConfig({...configRes.data.data, ui_theme: theme, nav_theme: navTheme});
       if (theme.startsWith('#')) {
         setCustomHex(theme);
       } else {
         setCustomHex('#10b981'); // reset fallback
       }
+      setNavHex(navTheme);
     } catch {
       console.error("Erro ao carregar configurações do sistema.");
     } finally {
@@ -64,8 +68,9 @@ export default function SettingsModal({ isOpen, onClose, apiUrl }: SettingsModal
   const saveConfig = async () => {
     setLoading(true);
     try {
-      await axios.put(`${apiUrl}/system/config?ui_theme=${config.ui_theme}&default_model=${config.default_model}`);
+      await axios.put(`${apiUrl}/system/config?ui_theme=${encodeURIComponent(config.ui_theme)}&nav_theme=${encodeURIComponent(config.nav_theme)}&default_model=${config.default_model}`);
       setThemeBase(config.ui_theme);
+      setNavThemeBase(config.nav_theme);
       toast.success("Configurações salvas com sucesso!");
     } catch {
       toast.error("Erro ao salvar configurações.");
@@ -181,6 +186,37 @@ export default function SettingsModal({ isOpen, onClose, apiUrl }: SettingsModal
                 </div>
               </div>
               <p className="text-xs text-slate-500 pt-1">A cor principal altera os destaques e botões primários da aplicação. Padrões ou código Hexadecimal.</p>
+            </div>
+
+            <div className="space-y-2 mt-4">
+              <label className="text-sm font-medium text-slate-600 block">Cor das Barras de Navegação (Lateral e Topo)</label>
+              <div className="flex items-center gap-2">
+                <div className="relative w-10 h-10 rounded-full overflow-hidden hover:scale-110 transition-transform ring-1 ring-slate-300">
+                  <input 
+                    type="color" 
+                    value={navHex}
+                    onChange={(e) => {
+                      setNavHex(e.target.value);
+                      setConfig({...config, nav_theme: e.target.value});
+                    }}
+                    className="absolute -top-2 -left-2 w-16 h-16 cursor-pointer"
+                    title="Cor Customizada"
+                  />
+                </div>
+                <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-1 rounded-md">
+                  {config.nav_theme.toUpperCase()}
+                </span>
+                <button 
+                  onClick={() => {
+                    setNavHex('#0f172a');
+                    setConfig({...config, nav_theme: '#0f172a'});
+                  }}
+                  className="px-3 py-1.5 ml-2 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-md transition-colors"
+                >
+                  Resetar Padrão
+                </button>
+              </div>
+              <p className="text-xs text-slate-500 pt-1">Esta cor afeta apenas o fundo das barras laterais e cabeçalho, separando a cor dos botões (Tema Interface).</p>
             </div>
 
           </div>
