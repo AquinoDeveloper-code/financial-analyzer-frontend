@@ -2,6 +2,7 @@ import { TrendingUp, Settings, Home, Shield } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import NotificationCenter from './NotificationCenter';
 
 interface HeaderProps {
   onOpenSettings: () => void;
@@ -56,6 +57,8 @@ export default function Header({ onOpenSettings }: HeaderProps) {
           >
             <Home size={20} />
           </button>
+          
+          <NotificationCenter />
           
           <button 
             onClick={onOpenSettings}

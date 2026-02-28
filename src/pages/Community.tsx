@@ -140,7 +140,13 @@ function PostCard({ post: initialPost, currentUserId, onDelete }: { post: Post; 
           <div className="flex items-center gap-3">
             <Avatar author={post.author} size={10} />
             <div>
-              <p className="font-semibold text-slate-800 text-sm">{getDisplayName(post.author)}</p>
+              <div className="flex items-center gap-2">
+                <p className="font-semibold text-slate-800 text-sm">{getDisplayName(post.author)}</p>
+                {/* Badge/Conquista baseada em lógicas do sistema (simulado para UI) */}
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200" title="Investidor Ativo">
+                  Pioneiro 🏆
+                </span>
+              </div>
               <p className="text-xs text-slate-400">{timeAgo(post.created_at)}</p>
             </div>
           </div>
@@ -192,7 +198,10 @@ function PostCard({ post: initialPost, currentUserId, onDelete }: { post: Post; 
                 <div className="flex-1 bg-white rounded-xl px-3 py-2 border border-slate-200">
                   <div className="flex items-center justify-between gap-2 mb-0.5">
                     <span className="text-xs font-semibold text-slate-700">{getDisplayName(c.author)}</span>
-                    <div className="flex items-center gap-1">
+                    <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-indigo-50 text-indigo-600 border border-indigo-100">
+                      Membro Ativo
+                    </span>
+                    <div className="flex items-center gap-1 ml-auto">
                       <span className="text-xs text-slate-400">{timeAgo(c.created_at)}</span>
                       {c.user_id === currentUserId && (
                         <button onClick={() => deleteComment(c.id)} className="text-slate-300 hover:text-rose-400 transition-colors ml-1">

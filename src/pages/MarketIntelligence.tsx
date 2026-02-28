@@ -119,7 +119,7 @@ export default function MarketIntelligence({ apiUrl }: { apiUrl: string }) {
             <Activity className="text-indigo-500" /> Inteligência de Mercado (IA)
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">
-            Simulador assistido por IA conectado em tempo real aos dados da Alpha Vantage.
+            Manchetes e Simulador assistido por IA conectado em tempo real aos dados da Alpha Vantage.
           </p>
           {apiError && (
             <p className="text-amber-600 dark:text-amber-500 text-sm mt-2 flex items-center gap-1 font-medium">

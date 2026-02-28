@@ -89,6 +89,31 @@ export default function MainApp() {
     return (
       <>
         <DailyQuoteSection apiUrl={apiUrl} />
+        
+        {/* Ações Rápidas - Nova Funcionalidade */}
+        <div className="col-span-1 lg:col-span-3 mb-2 animate-fade-in flex gap-4 overflow-x-auto pb-2 custom-scrollbar">
+          <Link to="/new" className="flex-1 bg-white border border-slate-200 hover:border-emerald-300 dark:bg-slate-800 dark:border-slate-700 p-4 rounded-2xl shadow-sm text-center transition-all hover:scale-[1.02]">
+            <div className="w-10 h-10 mx-auto bg-emerald-50 dark:bg-emerald-900/40 rounded-full flex items-center justify-center mb-2">
+              <PlusCircle className="text-emerald-500" size={20}/>
+            </div>
+            <h3 className="font-bold text-slate-800 dark:text-white text-sm">Nova Análise</h3>
+            <p className="text-xs text-slate-500 mt-1 line-clamp-2">Extraia dados de faturas.</p>
+          </Link>
+          <Link to="/reconciliation" className="flex-1 bg-white border border-slate-200 hover:border-indigo-300 dark:bg-slate-800 dark:border-slate-700 p-4 rounded-2xl shadow-sm text-center transition-all hover:scale-[1.02]">
+            <div className="w-10 h-10 mx-auto bg-indigo-50 dark:bg-indigo-900/40 rounded-full flex items-center justify-center mb-2">
+              <Bot className="text-indigo-500" size={20}/>
+            </div>
+            <h3 className="font-bold text-slate-800 dark:text-white text-sm">Conciliação</h3>
+            <p className="text-xs text-slate-500 mt-1 line-clamp-2">Cruzar transações bancárias.</p>
+          </Link>
+          <Link to="/market" className="flex-1 bg-white border border-slate-200 hover:border-amber-300 dark:bg-slate-800 dark:border-slate-700 p-4 rounded-2xl shadow-sm text-center transition-all hover:scale-[1.02]">
+            <div className="w-10 h-10 mx-auto bg-amber-50 dark:bg-amber-900/40 rounded-full flex items-center justify-center mb-2">
+              <span className="text-amber-500 text-lg">💡</span>
+            </div>
+            <h3 className="font-bold text-slate-800 dark:text-white text-sm">Mercado IA</h3>
+            <p className="text-xs text-slate-500 mt-1 line-clamp-2">Pergunte aos analistas AI.</p>
+          </Link>
+        </div>
         <div className="col-span-1 lg:col-span-3 min-h-[40vh] flex flex-col items-center justify-center text-center p-8 bg-white border border-slate-200 border-dashed rounded-3xl opacity-80">
           <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mb-6">
             <PlusCircle className="text-emerald-500" size={36} strokeWidth={1.5} />

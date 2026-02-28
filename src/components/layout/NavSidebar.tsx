@@ -27,16 +27,39 @@ export default function NavSidebar() {
     }
     return user?.email || 'Usuário';
   };
-  const routes = [
-    { name: 'Home', path: '/', icon: <Home size={20} /> },
-    { name: 'Nova Análise', path: '/new', icon: <PlusCircle size={20} /> },
-    { name: 'Conciliação', path: '/reconciliation', icon: <ArrowRightLeft size={20} /> },
-    { name: 'Carteira & Metas', path: '/goals', icon: <PiggyBank size={20} /> },
-    { name: 'Inteligência (IA)', path: '/market', icon: <TrendingUp size={20} /> },
-    { name: 'Câmbio & Forex', path: '/forex', icon: <Globe size={20} /> },
-    { name: 'Comunidade', path: '/community', icon: <Users size={20} /> },
-    { name: 'Meu Perfil', path: '/profile', icon: <User size={20} /> },
+  const categorizedRoutes = [
+    {
+      category: 'Ferramentas',
+      items: [
+        { name: 'Home', path: '/', icon: <Home size={20} /> },
+        { name: 'Nova Análise', path: '/new', icon: <PlusCircle size={20} /> },
+        { name: 'Conciliação', path: '/reconciliation', icon: <ArrowRightLeft size={20} /> },
+        { name: 'Carteira & Metas', path: '/goals', icon: <PiggyBank size={20} /> },
+      ]
+    },
+    {
+      category: 'Dados',
+      items: [
+        { name: 'Câmbio & Forex', path: '/forex', icon: <Globe size={20} /> },
+        { name: 'Inteligência (IA)', path: '/market', icon: <TrendingUp size={20} /> },
+      ]
+    },
+    {
+      category: 'Config',
+      items: [
+        { name: 'Meu Perfil', path: '/profile', icon: <User size={20} /> },
+      ]
+    },
+    {
+      category: 'Outros',
+      items: [
+        { name: 'Comunidade', path: '/community', icon: <Users size={20} /> },
+      ]
+    }
   ];
+
+  const backendBaseUrl = import.meta.env.VITE_API_BASE_URL?.replace('/api/v1', '') || 'http://localhost:8000';
+  const avatarSrc = user?.avatar_url ? `${backendBaseUrl}${user.avatar_url}` : null;
 
   return (
     <aside 
@@ -48,24 +71,31 @@ export default function NavSidebar() {
         <span className="ml-3 font-bold text-white text-lg hidden md:block tracking-tight">FinAnalyzer</span>
       </div>
       
-      <nav className="flex-1 px-3 py-6 space-y-2">
-        {routes.map((r) => (
-          <NavLink
-            key={r.path}
-            to={r.path}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-3 rounded-xl transition-all ${
-                isActive 
-                  ? 'bg-emerald-500/10 text-emerald-400 font-medium' 
-                  : 'hover:bg-slate-800 hover:text-white'
-              }`
-            }
-          >
-            <div className="flex items-center justify-center min-w-[24px]">
-              {r.icon}
-            </div>
-            <span className="hidden md:block">{r.name}</span>
-          </NavLink>
+      <nav className="flex-1 px-3 py-6 space-y-6 overflow-y-auto custom-scrollbar">
+        {categorizedRoutes.map((section) => (
+          <div key={section.category} className="space-y-1">
+            <h4 className="hidden md:block px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+              {section.category}
+            </h4>
+            {section.items.map((r) => (
+              <NavLink
+                key={r.path}
+                to={r.path}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
+                    isActive 
+                      ? 'bg-emerald-500/10 text-emerald-400 font-medium' 
+                      : 'hover:bg-slate-800 hover:text-white'
+                  }`
+                }
+              >
+                <div className="flex items-center justify-center min-w-[24px]">
+                  {r.icon}
+                </div>
+                <span className="hidden md:block">{r.name}</span>
+              </NavLink>
+            ))}
+          </div>
         ))}
       </nav>
       
@@ -73,16 +103,20 @@ export default function NavSidebar() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/profile')}
-            className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-800 flex items-center justify-center flex-shrink-0 border border-slate-700 hover:border-emerald-500 transition-colors"
+            className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-800 flex items-center justify-center flex-shrink-0 border border-slate-700 hover:border-emerald-500 transition-all overflow-hidden"
             title="Ver Perfil"
           >
-            <span className="text-slate-300 font-bold text-sm">{getUserInitial()}</span>
+            {avatarSrc ? (
+              <img src={avatarSrc} alt="Avatar" className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-slate-300 font-bold text-sm">{getUserInitial()}</span>
+            )}
           </button>
           <div className="hidden md:block overflow-hidden">
-            <p className="text-sm font-medium text-slate-300 truncate w-full" title={getDisplayName()}>
+            <p className="text-sm font-medium text-slate-300 truncate w-[100px]" title={getDisplayName()}>
               {getDisplayName()}
             </p>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 truncate">
               {user?.is_admin === "1" ? "Administrador" : "Membro"}
             </p>
           </div>
@@ -90,7 +124,7 @@ export default function NavSidebar() {
         
         <button 
           onClick={handleLogout}
-          className="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors"
+          className="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors shrink-0"
           title="Sair do sistema"
         >
           <LogOut size={18} />
