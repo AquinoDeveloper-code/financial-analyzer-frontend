@@ -21,7 +21,7 @@ interface ReconciliationResponse {
 }
 
 interface ContextProps {
-  history: Array<{ doc_hash: string; tipo: string; created_at: string }>;
+  history: Array<{ doc_hash: string; tipo: string; filename?: string; created_at: string }>;
   apiUrl: string;
 }
 
@@ -110,7 +110,7 @@ export default function Reconciliation() {
               <option value="">-- Escolha um documento --</option>
               {history?.map(doc => (
                 <option key={doc.doc_hash} value={doc.doc_hash}>
-                  {doc.tipo.toUpperCase()} - {new Date(doc.created_at).toLocaleDateString()}
+                  {doc.filename || `${doc.tipo.toUpperCase()} - ${new Date(doc.created_at).toLocaleDateString()}`}
                 </option>
               ))}
             </select>
@@ -139,7 +139,7 @@ export default function Reconciliation() {
               <option value="">-- Escolha um documento --</option>
               {history?.map(doc => (
                 <option key={doc.doc_hash} value={doc.doc_hash}>
-                  {doc.tipo.toUpperCase()} - {new Date(doc.created_at).toLocaleDateString()}
+                  {doc.filename || `${doc.tipo.toUpperCase()} - ${new Date(doc.created_at).toLocaleDateString()}`}
                 </option>
               ))}
             </select>
