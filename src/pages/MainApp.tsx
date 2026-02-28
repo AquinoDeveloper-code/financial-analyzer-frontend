@@ -10,6 +10,7 @@ import TransactionsTable from "../components/dashboard/TransactionsTable";
 import RecurringExpenses from "../components/dashboard/RecurringExpenses";
 import ChatDrawer from "../components/dashboard/ChatDrawer";
 import DailyQuoteSection from "../components/dashboard/DailyQuoteSection";
+import NewsWidget from "../components/dashboard/NewsWidget";
 import { downloadPdfFromHtml } from "../utils/pdfGenerator";
 
 interface ApiResult {
@@ -101,6 +102,10 @@ export default function MainApp() {
             <PlusCircle size={20} />
             <span>Fazer Nova Análise</span>
           </Link>
+        </div>
+        
+        <div className="col-span-1 lg:col-span-3">
+          <NewsWidget apiUrl={apiUrl} />
         </div>
       </>
     );
