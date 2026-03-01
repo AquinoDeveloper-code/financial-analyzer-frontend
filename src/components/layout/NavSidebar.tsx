@@ -29,9 +29,14 @@ export default function NavSidebar() {
   };
   const categorizedRoutes = [
     {
+      category: 'Home',
+      items: [
+        { name: 'Central', path: '/', icon: <Home size={20} /> },
+      ]
+    },
+    {
       category: 'Ferramentas',
       items: [
-        { name: 'Home', path: '/', icon: <Home size={20} /> },
         { name: 'Nova Análise', path: '/new', icon: <PlusCircle size={20} /> },
         { name: 'Conciliação', path: '/reconciliation', icon: <ArrowRightLeft size={20} /> },
         { name: 'Carteira & Metas', path: '/goals', icon: <PiggyBank size={20} /> },
@@ -45,15 +50,15 @@ export default function NavSidebar() {
       ]
     },
     {
-      category: 'Config',
-      items: [
-        { name: 'Meu Perfil', path: '/profile', icon: <User size={20} /> },
-      ]
-    },
-    {
       category: 'Outros',
       items: [
         { name: 'Comunidade', path: '/community', icon: <Users size={20} /> },
+      ]
+    },
+    {
+      category: 'Config',
+      items: [
+        { name: 'Meu Perfil', path: '/profile', icon: <User size={20} /> },
       ]
     }
   ];
